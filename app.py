@@ -53,27 +53,21 @@ def main():
         
         st.write("Processing...")
         
-        # Preprocess the image
         image_tensor = load_and_preprocess_image(image)
         
-        # Prediction
         with torch.no_grad():
-            result = loaded_model(image_tensor)  # Shape: (1, 2, 512, 512)
+            result = loaded_model(image_tensor) 
 
-        # Debugging: check min and max of the result
         st.write("Model output min/max values:", result.min().item(), result.max().item())
 
-        # Convert to a single-channel output using argmax
         result = result.squeeze(0)
-        result_image = torch.argmax(result, dim=0).cpu().numpy()  # Shape: (512, 512)
+        result_image = torch.argmax(result, dim=0).cpu().numpy()  
 
-        # Scale result for visibility if necessary
         if result_image.max() == 0:
             st.warning("Segmentation output is entirely zero.")
         else:
             result_image = (result_image * 255 / result_image.max()).astype(np.uint8)  # Scale to 0-255
 
-        # Display the segmented output
         st.image(result_image, caption="Segmented Output", width=300, clamp=True)
 
 if __name__ == "__main__":
