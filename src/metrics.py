@@ -82,3 +82,18 @@ def f1_score(y_true, y_pred):
     
     f1 = 2 * (precision_score * recall_score) / (precision_score + recall_score + 1e-7)
     return f1
+
+def accuracy(y_true, y_pred):
+    num = y_true.size(0)
+    eps = 1e-7
+    
+    y_true_flat = y_true.view(num, -1)
+    y_pred_flat = y_pred.view(num, -1)
+    
+    true_positives = (y_true_flat * y_pred_flat).sum(1)
+    true_negatives = ((1 - y_true_flat) * (1 - y_pred_flat)).sum(1)
+    total_pixels = y_true_flat.size(1)
+    
+    accuracy_score = (true_positives + true_negatives) / (total_pixels + eps)
+    accuracy_score = accuracy_score.sum() / num
+    return accuracy_score
